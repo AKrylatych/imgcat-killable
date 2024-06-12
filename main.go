@@ -11,6 +11,8 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -227,7 +229,7 @@ func escape(frames []image.Image) [][]string {
 	return escaped
 }
 
-func print(frames [][]string) {
+func print(frames [][]string, timeout int) {
 	if isatty.IsTerminal(os.Stdout.Fd()) {
 		defer enableEcho(disableEcho())
 	}
@@ -253,6 +255,9 @@ func print(frames [][]string) {
 		}()
 
 		for i := 0; playing; i++ {
+			if timeout == i && timeout > 0 {
+				playing = false
+			}
 			if i != 0 {
 				os.Stdout.WriteString(fmt.Sprintf(ANSI_CURSOR_UP, h))
 			}
@@ -263,7 +268,7 @@ func print(frames [][]string) {
 			<-tick
 		}
 	}
-
+	os.Stdout.WriteString(ANSI_RESET)
 	os.Stdout.WriteString(ANSI_CURSOR_SHOW)
 }
 
@@ -272,9 +277,27 @@ func main() {
 	ParseFlags()
 
 	input := ""
+
+	timeout := 0
 	if len(flag.Args()) > 0 {
 		args := flag.Args()
 		input = args[0]
+		if len(args) > 1 && args[1] != "" {
+			// Regular expression to match "timeout=<number>"
+			re := regexp.MustCompile(`^timeout=(\d+)$`)
+			matches := re.FindStringSubmatch(args[1])
+			if len(matches) > 1 {
+				// matches[1] contains the numeric part
+				timeoutStr := matches[1]
+				numtimeout, err := strconv.Atoi(timeoutStr)
+				if err != nil {
+					fmt.Println("Error converting timeout to number:", err)
+				} else {
+					timeout = numtimeout
+					fmt.Println("Converted timeout to number:", numtimeout)
+				}
+			}
+		}
 	}
 
 	switch *interpolation {
@@ -284,5 +307,5 @@ func main() {
 		InterpolationType = imaging.Lanczos
 	}
 
-	print(escape(scale(decode(read(input)))))
+	print(escape(scale(decode(read(input)))), timeout)
 }
