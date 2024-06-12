@@ -76,6 +76,12 @@ Display a local image
 imgcat path/to/image.png
 ```
 
+To use timeout, type the frames you want to display in the place of the <b>#</b> symbol
+
+```
+imgcat path/to/image.png timeout=#
+```
+
 ### Requirements
 
 Your terminal emulator must be support `true color` and use a `monospaced font` that includes the lower half block unicode character (`▄ U+2584`).
