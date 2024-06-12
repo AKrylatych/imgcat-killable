@@ -76,7 +76,7 @@ Display a local image
 imgcat path/to/image.png
 ```
 
-To use timeout, type the frames you want to display in the place of the <b>#</b> symbol
+To use timeout, type the amount of frames you want to display in the place of the <b>#</b> symbol
 
 ```
 imgcat path/to/image.png timeout=#
