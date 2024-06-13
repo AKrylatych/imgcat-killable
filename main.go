@@ -281,7 +281,7 @@ func main() {
 	timeout := 0
 	if len(flag.Args()) > 0 {
 		args := flag.Args()
-		input = args[0]
+
 		if len(args) > 1 && args[1] != "" {
 			// Regular expression to match "timeout=<number>"
 			re := regexp.MustCompile(`^timeout=(\d+)$`)
@@ -294,9 +294,24 @@ func main() {
 					fmt.Println("Error converting timeout to number:", err)
 				} else {
 					timeout = numtimeout
-					fmt.Println("Converted timeout to number:", numtimeout)
 				}
 			}
+		} else if len(args) == 1 && strings.Contains(args[0], "timeout=") {
+			re := regexp.MustCompile(`^timeout=(\d+)$`)
+			matches := re.FindStringSubmatch(args[0])
+			if len(matches) > 1 {
+				// matches[1] contains the numeric part
+				timeoutStr := matches[1]
+				numtimeout, err := strconv.Atoi(timeoutStr)
+				if err != nil {
+					fmt.Println("Error converting timeout to number:", err)
+				} else {
+					timeout = numtimeout
+				}
+			}
+		} else {
+			input = args[0]
+
 		}
 	}
 
