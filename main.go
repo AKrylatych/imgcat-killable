@@ -283,6 +283,7 @@ func main() {
 		args := flag.Args()
 
 		if len(args) > 1 && args[1] != "" {
+			input = args[0]
 			// Regular expression to match "timeout=<number>"
 			re := regexp.MustCompile(`^timeout=(\d+)$`)
 			matches := re.FindStringSubmatch(args[1])
@@ -311,7 +312,6 @@ func main() {
 			}
 		} else {
 			input = args[0]
-
 		}
 	}
 
