@@ -76,11 +76,20 @@ Display a local image
 imgcat path/to/image.png
 ```
 
+### Timeout usage
 To use timeout, type the amount of frames you want to display in the place of the <b>#</b> symbol
 
 ```
 imgcat path/to/image.png timeout=#
 ```
+
+Also works with pipes
+
+
+```
+curl -s http://input.png | imgcat timeout=#
+```
+
 
 ### Requirements
 
